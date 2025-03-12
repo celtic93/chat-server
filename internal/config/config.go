@@ -1,22 +1,23 @@
 package config
 
 import (
-	"log"
+	"flag"
 
-	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/joho/godotenv"
 )
 
-type GRPCConfig struct {
-	Host string `yaml:"host" env:"HOST" env-default:"0.0.0.0"`
-	Port int    `yaml:"port" env:"PORT" env-default:"50052"`
+var configPath string
+
+func initPath() {
+	flag.StringVar(&configPath, "config-path", ".env", "path to config file")
 }
 
-func MustLoad() GRPCConfig {
-	var cfg GRPCConfig
-	err := cleanenv.ReadEnv(&cfg)
+func Load() error {
+	initPath()
+	err := godotenv.Load(configPath)
 	if err != nil {
-		log.Fatalf("failed to load config env: %v", err)
+		return err
 	}
 
-	return cfg
+	return nil
 }

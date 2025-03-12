@@ -25,3 +25,6 @@ generate-api:
 	--go-grpc_out=pkg/v1/chat --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
 	api/v1/chat/chat.proto
+
+run:
+	go run cmd/main.go

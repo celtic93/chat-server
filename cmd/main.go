@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
 
@@ -15,9 +14,17 @@ import (
 )
 
 func main() {
-	cfg := config.MustLoad()
+	err := config.Load()
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
 
-	conn, err := net.Listen("tcp", fmt.Sprintf("%s:%d", cfg.Host, cfg.Port))
+	grpcConfig, err := config.NewGRPCConfig()
+	if err != nil {
+		log.Fatalf("failed to get grpc config: %v", err)
+	}
+
+	conn, err := net.Listen("tcp", grpcConfig.Address())
 	if err != nil {
 		log.Fatal(color.RedString("failed to serve grpc server: %v", err))
 	}
