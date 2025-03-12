@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net"
 
 	"github.com/fatih/color"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
@@ -24,6 +26,18 @@ func main() {
 		log.Fatalf("failed to get grpc config: %v", err)
 	}
 
+	pgConfig, err := config.NewPGConfig()
+	if err != nil {
+		log.Fatalf("failed to get pg config: %v", err)
+	}
+
+	ctx := context.Background()
+	pool, err := pgxpool.Connect(ctx, pgConfig.DSN())
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+	defer pool.Close()
+
 	conn, err := net.Listen("tcp", grpcConfig.Address())
 	if err != nil {
 		log.Fatal(color.RedString("failed to serve grpc server: %v", err))
@@ -34,7 +48,7 @@ func main() {
 	gsrv := grpc.NewServer()
 	reflection.Register(gsrv)
 
-	desc.RegisterChatV1Server(gsrv, &server.Server{})
+	desc.RegisterChatV1Server(gsrv, &server.Server{Pool: pool})
 
 	if err = gsrv.Serve(conn); err != nil {
 		log.Fatal(color.RedString("failed to serve grpc server: %v", err))

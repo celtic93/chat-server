@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/brianvoe/gofakeit"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	desc "github.com/celtic93/chat-server/pkg/v1/chat"
@@ -12,6 +13,7 @@ import (
 
 type Server struct {
 	desc.UnimplementedChatV1Server
+	Pool *pgxpool.Pool
 }
 
 // Create: creates chat
