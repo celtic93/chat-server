@@ -19,6 +19,7 @@ const (
 	chatsTable      string = "chats"
 	chatsUsersTable string = "chats_users"
 	IDColumn        string = "id"
+	textColumn      string = "text"
 	usernameColumn  string = "username"
 )
 
@@ -83,8 +84,25 @@ func (s *Server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.Cre
 }
 
 // SendMessage: sends message to chat
-func (s *Server) SendMessage(_ context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
+func (s *Server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
 	log.Printf("server.SendMessage Chat id: %d", req.GetChatId())
+	query, args, err := sq.Insert("messages").
+		Columns(chatIDColumn, usernameColumn, textColumn).
+		Values(req.ChatId, req.Username, req.Text).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		log.Printf("failed to build query: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to build query: %v", err)
+	}
+
+	_, err = s.Pool.Exec(ctx, query, args...)
+	if err != nil {
+		log.Printf("failed to insert message: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to insert message: %v", err)
+	}
+
+	log.Printf("inserted message with id: %d", req.ChatId)
 
 	return &emptypb.Empty{}, nil
 }
