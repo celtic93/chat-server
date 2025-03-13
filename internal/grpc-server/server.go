@@ -16,7 +16,9 @@ import (
 
 const (
 	chatIDColumn    string = "chat_id"
+	chatsTable      string = "chats"
 	chatsUsersTable string = "chats_users"
+	IDColumn        string = "id"
 	usernameColumn  string = "username"
 )
 
@@ -43,9 +45,11 @@ func (s *Server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.Cre
 
 	defer func() {
 		if err != nil {
+			log.Printf("insert chat and chats_users: %v", err)
 			_ = tx.Rollback(ctx)
 			return
 		}
+		log.Printf("failed to insert chat and chats_users: %v", err)
 		_ = tx.Commit(ctx)
 	}()
 
@@ -86,8 +90,24 @@ func (s *Server) SendMessage(_ context.Context, req *desc.SendMessageRequest) (*
 }
 
 // Delete: deletes chat
-func (s *Server) Delete(_ context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
+func (s *Server) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
 	log.Printf("server.Delete Chat id: %d", req.GetId())
+	builderDelete := sq.Delete(chatsTable).
+		PlaceholderFormat(sq.Dollar).
+		Where(sq.Eq{IDColumn: req.GetId()})
+
+	query, args, err := builderDelete.ToSql()
+	if err != nil {
+		log.Print(err)
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	if _, err = s.Pool.Exec(ctx, query, args...); err != nil {
+		log.Print(err)
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	log.Printf("deleted chat with id: %d", req.GetId())
 
 	return &emptypb.Empty{}, nil
 }
