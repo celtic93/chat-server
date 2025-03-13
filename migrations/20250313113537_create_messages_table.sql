@@ -3,7 +3,7 @@
 CREATE TABLE messages
 (
     id bigserial primary key,
-    chatID int references chats(id) on delete cascade,
+    chat_id int references chats(id) on delete cascade,
     username varchar(64) not null,
     text text not null,
     created_at timestamp(0) default CURRENT_TIMESTAMP,
