@@ -8,6 +8,9 @@ import (
 
 type ChatRepository interface {
 	Create(ctx context.Context, chat *model.Chat) (int64, error)
-	SendMessage(ctx context.Context, message *model.Message) error
 	Delete(ctx context.Context, id int64) error
+}
+
+type MessageRepository interface {
+	SendMessage(ctx context.Context, message *model.Message) error
 }
