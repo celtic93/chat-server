@@ -30,9 +30,9 @@ type Server struct {
 
 // Create: creates chat
 func (s *Server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	log.Printf("server.Create Chat id: %s", req.GetUsernames())
+	log.Printf("server.Create Chat id: %d", req.GetUserIds())
 
-	if len(req.GetUsernames()) == 0 {
+	if len(req.GetUserIds()) == 0 {
 		log.Print("usernames are empty")
 		return nil, status.Error(codes.InvalidArgument, "usernames can't be empty")
 	}
@@ -60,7 +60,7 @@ func (s *Server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.Cre
 		return nil, status.Errorf(codes.Internal, "failed to insert chat: %v", err)
 	}
 
-	for _, username := range req.GetUsernames() {
+	for _, username := range req.GetUserIds() {
 		createUserChatsQuery, args, err := sq.Insert(chatsUsersTable).
 			Columns(chatIDColumn, usernameColumn).
 			Values(chatID, username).
@@ -88,7 +88,7 @@ func (s *Server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) 
 	log.Printf("server.SendMessage Chat id: %d", req.GetChatId())
 	query, args, err := sq.Insert("messages").
 		Columns(chatIDColumn, usernameColumn, textColumn).
-		Values(req.ChatId, req.Username, req.Text).
+		Values(req.ChatId, req.UserId, req.Text).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {

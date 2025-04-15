@@ -13,7 +13,7 @@ service ChatV1 {
 }
 
 message CreateRequest {
-  repeated string usernames = 1;
+  repeated int64 user_ids = 1;
 }
 
 message CreateResponse {
@@ -26,6 +26,6 @@ message DeleteRequest {
 
 message SendMessageRequest {
   int64  chat_id = 1;
-  string username = 2;
+  int64  user_id = 2;
   string text = 3;
 }
