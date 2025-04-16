@@ -10,8 +10,8 @@ import (
 	sq "github.com/Masterminds/squirrel"
 )
 
-func (r *repo) SendMessage(ctx context.Context, message *model.Message) error {
-	log.Printf("repository.Message.SendMessage started. Chat id: %d, User id: %d", message.ChatID, message.UserID)
+func (r *repo) Create(ctx context.Context, message *model.Message) error {
+	log.Printf("repository.Message.Create started. Chat id: %d, User id: %d", message.ChatID, message.UserID)
 
 	timeNow := time.Now()
 	query, args, err := sq.Insert(messagesTable).
@@ -30,7 +30,7 @@ func (r *repo) SendMessage(ctx context.Context, message *model.Message) error {
 		return err
 	}
 
-	log.Printf("repository.Message.SendMessage ended. Chat id: %d, User id: %d", message.ChatID, message.UserID)
+	log.Printf("repository.Message.Create ended. Chat id: %d, User id: %d", message.ChatID, message.UserID)
 
 	return nil
 }

@@ -12,5 +12,5 @@ type ChatService interface {
 }
 
 type MessageService interface {
-	SendMessage(ctx context.Context, message *model.Message) error
+	Create(ctx context.Context, message *model.Message) error
 }

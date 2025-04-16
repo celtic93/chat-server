@@ -5,7 +5,7 @@ import (
 	desc "github.com/celtic93/chat-server/pkg/v1/message"
 )
 
-func ToMessageFromSendMessageRequest(req *desc.SendMessageRequest) *model.Message {
+func ToMessageFromCreateRequest(req *desc.CreateRequest) *model.Message {
 	return &model.Message{
 		ChatID: req.ChatId,
 		UserID: req.UserId,

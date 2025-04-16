@@ -14,9 +14,9 @@ import (
 	messageAPI "github.com/celtic93/chat-server/internal/api/message"
 	"github.com/celtic93/chat-server/internal/config"
 	chatRepository "github.com/celtic93/chat-server/internal/repository/chat"
- 	chatService "github.com/celtic93/chat-server/internal/service/chat"
 	messageRepository "github.com/celtic93/chat-server/internal/repository/message"
- 	messageService "github.com/celtic93/chat-server/internal/service/message"
+	chatService "github.com/celtic93/chat-server/internal/service/chat"
+	messageService "github.com/celtic93/chat-server/internal/service/message"
 	chatDesc "github.com/celtic93/chat-server/pkg/v1/chat"
 	messageDesc "github.com/celtic93/chat-server/pkg/v1/message"
 )
@@ -55,11 +55,11 @@ func main() {
 	reflection.Register(gsrv)
 
 	chatRepo := chatRepository.NewRepository(pool)
- 	chatServ := chatService.NewService(chatRepo)
+	chatServ := chatService.NewService(chatRepo)
 	chatDesc.RegisterChatV1Server(gsrv, chatAPI.NewImplementation(chatServ))
 
 	msgRepo := messageRepository.NewRepository(pool)
- 	msgServ := messageService.NewService(msgRepo)
+	msgServ := messageService.NewService(msgRepo)
 	messageDesc.RegisterMessageV1Server(gsrv, messageAPI.NewImplementation(msgServ))
 
 	if err = gsrv.Serve(conn); err != nil {

@@ -11,15 +11,15 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (i *Implementation) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
-	log.Printf("api.Message.SendMessage started. Chat id: %d, User id: %d", req.ChatId, req.UserId)
+func (i *Implementation) Create(ctx context.Context, req *desc.CreateRequest) (*emptypb.Empty, error) {
+	log.Printf("api.Message.Create started. Chat id: %d, User id: %d", req.ChatId, req.UserId)
 
-	err := i.messageService.SendMessage(ctx, converter.ToMessageFromSendMessageRequest(req))
+	err := i.messageService.Create(ctx, converter.ToMessageFromCreateRequest(req))
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	log.Printf("api.Message.SendMessage ended. Chat id: %d, User id: %d", req.ChatId, req.UserId)
+	log.Printf("api.Message.Create ended. Chat id: %d, User id: %d", req.ChatId, req.UserId)
 
 	return &emptypb.Empty{}, nil
 }

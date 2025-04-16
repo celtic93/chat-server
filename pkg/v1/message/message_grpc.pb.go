@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MessageV1Client interface {
-	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type messageV1Client struct {
@@ -34,9 +34,9 @@ func NewMessageV1Client(cc grpc.ClientConnInterface) MessageV1Client {
 	return &messageV1Client{cc}
 }
 
-func (c *messageV1Client) SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *messageV1Client) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/message_v1.MessageV1/SendMessage", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/message_v1.MessageV1/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (c *messageV1Client) SendMessage(ctx context.Context, in *SendMessageReques
 // All implementations must embed UnimplementedMessageV1Server
 // for forward compatibility
 type MessageV1Server interface {
-	SendMessage(context.Context, *SendMessageRequest) (*emptypb.Empty, error)
+	Create(context.Context, *CreateRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedMessageV1Server()
 }
 
@@ -55,8 +55,8 @@ type MessageV1Server interface {
 type UnimplementedMessageV1Server struct {
 }
 
-func (UnimplementedMessageV1Server) SendMessage(context.Context, *SendMessageRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
+func (UnimplementedMessageV1Server) Create(context.Context, *CreateRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedMessageV1Server) mustEmbedUnimplementedMessageV1Server() {}
 
@@ -71,20 +71,20 @@ func RegisterMessageV1Server(s grpc.ServiceRegistrar, srv MessageV1Server) {
 	s.RegisterService(&MessageV1_ServiceDesc, srv)
 }
 
-func _MessageV1_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendMessageRequest)
+func _MessageV1_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MessageV1Server).SendMessage(ctx, in)
+		return srv.(MessageV1Server).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/message_v1.MessageV1/SendMessage",
+		FullMethod: "/message_v1.MessageV1/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MessageV1Server).SendMessage(ctx, req.(*SendMessageRequest))
+		return srv.(MessageV1Server).Create(ctx, req.(*CreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -97,8 +97,8 @@ var MessageV1_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*MessageV1Server)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SendMessage",
-			Handler:    _MessageV1_SendMessage_Handler,
+			MethodName: "Create",
+			Handler:    _MessageV1_Create_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
