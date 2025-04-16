@@ -10,9 +10,15 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	chatAPI "github.com/celtic93/chat-server/internal/api/chat"
+	messageAPI "github.com/celtic93/chat-server/internal/api/message"
 	"github.com/celtic93/chat-server/internal/config"
-	server "github.com/celtic93/chat-server/internal/grpc-server"
-	desc "github.com/celtic93/chat-server/pkg/v1/chat"
+	chatRepository "github.com/celtic93/chat-server/internal/repository/chat"
+ 	chatService "github.com/celtic93/chat-server/internal/service/chat"
+	messageRepository "github.com/celtic93/chat-server/internal/repository/message"
+ 	messageService "github.com/celtic93/chat-server/internal/service/message"
+	chatDesc "github.com/celtic93/chat-server/pkg/v1/chat"
+	messageDesc "github.com/celtic93/chat-server/pkg/v1/message"
 )
 
 func main() {
@@ -48,7 +54,13 @@ func main() {
 	gsrv := grpc.NewServer()
 	reflection.Register(gsrv)
 
-	desc.RegisterChatV1Server(gsrv, &server.Server{Pool: pool})
+	chatRepo := chatRepository.NewRepository(pool)
+ 	chatServ := chatService.NewService(chatRepo)
+	chatDesc.RegisterChatV1Server(gsrv, chatAPI.NewImplementation(chatServ))
+
+	msgRepo := messageRepository.NewRepository(pool)
+ 	msgServ := messageService.NewService(msgRepo)
+	messageDesc.RegisterMessageV1Server(gsrv, messageAPI.NewImplementation(msgServ))
 
 	if err = gsrv.Serve(conn); err != nil {
 		log.Fatal(color.RedString("failed to serve grpc server: %v", err))
