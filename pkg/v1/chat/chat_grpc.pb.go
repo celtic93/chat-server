@@ -25,7 +25,6 @@ const _ = grpc.SupportPackageIsVersion7
 type ChatV1Client interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type chatV1Client struct {
@@ -38,7 +37,7 @@ func NewChatV1Client(cc grpc.ClientConnInterface) ChatV1Client {
 
 func (c *chatV1Client) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
 	out := new(CreateResponse)
-	err := c.cc.Invoke(ctx, "/user_v1.ChatV1/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/chat_v1.ChatV1/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,16 +46,7 @@ func (c *chatV1Client) Create(ctx context.Context, in *CreateRequest, opts ...gr
 
 func (c *chatV1Client) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/user_v1.ChatV1/Delete", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *chatV1Client) SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/user_v1.ChatV1/SendMessage", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/chat_v1.ChatV1/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +59,6 @@ func (c *chatV1Client) SendMessage(ctx context.Context, in *SendMessageRequest, 
 type ChatV1Server interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 	Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error)
-	SendMessage(context.Context, *SendMessageRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedChatV1Server()
 }
 
@@ -82,9 +71,6 @@ func (UnimplementedChatV1Server) Create(context.Context, *CreateRequest) (*Creat
 }
 func (UnimplementedChatV1Server) Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
-}
-func (UnimplementedChatV1Server) SendMessage(context.Context, *SendMessageRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
 }
 func (UnimplementedChatV1Server) mustEmbedUnimplementedChatV1Server() {}
 
@@ -109,7 +95,7 @@ func _ChatV1_Create_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/user_v1.ChatV1/Create",
+		FullMethod: "/chat_v1.ChatV1/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatV1Server).Create(ctx, req.(*CreateRequest))
@@ -127,28 +113,10 @@ func _ChatV1_Delete_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/user_v1.ChatV1/Delete",
+		FullMethod: "/chat_v1.ChatV1/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatV1Server).Delete(ctx, req.(*DeleteRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ChatV1_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendMessageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatV1Server).SendMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user_v1.ChatV1/SendMessage",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatV1Server).SendMessage(ctx, req.(*SendMessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -157,7 +125,7 @@ func _ChatV1_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ChatV1_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "user_v1.ChatV1",
+	ServiceName: "chat_v1.ChatV1",
 	HandlerType: (*ChatV1Server)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -167,10 +135,6 @@ var ChatV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _ChatV1_Delete_Handler,
-		},
-		{
-			MethodName: "SendMessage",
-			Handler:    _ChatV1_SendMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

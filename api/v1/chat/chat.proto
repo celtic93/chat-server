@@ -1,6 +1,6 @@
 syntax = "proto3";
  
-package user_v1;
+package chat_v1;
 
 import "google/protobuf/empty.proto";
 
@@ -9,7 +9,6 @@ option go_package = "github.com/celtic93/chat-server/pkg/v1/chat;chat_v1";
 service ChatV1 {
   rpc Create(CreateRequest) returns (CreateResponse);
   rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
-  rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty);
 }
 
 message CreateRequest {
@@ -22,10 +21,4 @@ message CreateResponse {
 
 message DeleteRequest {
   int64 id = 1;
-}
-
-message SendMessageRequest {
-  int64  chat_id = 1;
-  int64  user_id = 2;
-  string text = 3;
 }

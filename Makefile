@@ -21,9 +21,10 @@ get-deps:
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 generate:
-	make generate-api
+	make generate-api-chat
+	make generate-api-message
 
-generate-api:
+generate-api-chat:
 	mkdir -p pkg/v1/chat
 	protoc --proto_path api/v1/chat \
 	--go_out=pkg/v1/chat --go_opt=paths=source_relative \
@@ -31,6 +32,15 @@ generate-api:
 	--go-grpc_out=pkg/v1/chat --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
 	api/v1/chat/chat.proto
+
+generate-api-message:
+	mkdir -p pkg/v1/message
+	protoc --proto_path api/v1/message \
+	--go_out=pkg/v1/message --go_opt=paths=source_relative \
+	--plugin=protoc-gen-go=bin/protoc-gen-go \
+	--go-grpc_out=pkg/v1/message --go-grpc_opt=paths=source_relative \
+	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+	api/v1/message/message.proto
 
 migration-status:
 	$(LOCAL_BIN)/goose -dir ${MIGRATION_DIR} postgres ${PG_DSN} status -v

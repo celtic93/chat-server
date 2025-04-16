@@ -2,11 +2,11 @@ package message
 
 import (
 	"github.com/celtic93/chat-server/internal/service"
-	desc "github.com/celtic93/chat-server/pkg/v1/chat"
+	desc "github.com/celtic93/chat-server/pkg/v1/message"
 )
 
 type Implementation struct {
-	desc.UnimplementedChatV1Server
+	desc.UnimplementedMessageV1Server
 	messageService service.MessageService
 }
 

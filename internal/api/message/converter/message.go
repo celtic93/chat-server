@@ -2,7 +2,7 @@ package converter
 
 import (
 	"github.com/celtic93/chat-server/internal/model"
-	desc "github.com/celtic93/chat-server/pkg/v1/chat"
+	desc "github.com/celtic93/chat-server/pkg/v1/message"
 )
 
 func ToMessageFromSendMessageRequest(req *desc.SendMessageRequest) *model.Message {

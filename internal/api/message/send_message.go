@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/celtic93/chat-server/internal/api/message/converter"
-	desc "github.com/celtic93/chat-server/pkg/v1/chat"
+	desc "github.com/celtic93/chat-server/pkg/v1/message"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
