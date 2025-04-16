@@ -20,6 +20,7 @@ func (r *repo) Create(ctx context.Context, chat *model.Chat) (int64, error) {
 		return 0, err
 	}
 
+	var chatID int64
 	defer func() {
 		if err != nil {
 			log.Printf("failed to insert chat and chats_users: %v", err)
@@ -28,6 +29,8 @@ func (r *repo) Create(ctx context.Context, chat *model.Chat) (int64, error) {
 		}
 		log.Print("insert chat and chats_users")
 		_ = tx.Commit(ctx)
+
+		log.Printf("repository.Chat.Create ended. Created chat id: %d", chatID)
 	}()
 
 	timeNow := time.Now()
@@ -43,7 +46,6 @@ func (r *repo) Create(ctx context.Context, chat *model.Chat) (int64, error) {
 		return 0, err
 	}
 
-	var chatID int64
 	err = tx.QueryRow(ctx, query, args...).Scan(&chatID)
 	if err != nil {
 		log.Printf("failed to insert chat: %v", err)
@@ -52,8 +54,8 @@ func (r *repo) Create(ctx context.Context, chat *model.Chat) (int64, error) {
 
 	for _, userID := range chat.UserIDs {
 		createUserChatsQuery, args, err := sq.Insert(chatsUsersTable).
-			Columns(chatIDColumn, userIDColumn).
-			Values(chatID, userID).
+			Columns(chatIDColumn, userIDColumn, createdAtColumn, updatedAtColumn).
+			Values(chatID, userID, timeNow, timeNow).
 			PlaceholderFormat(sq.Dollar).
 			ToSql()
 		if err != nil {
@@ -67,8 +69,6 @@ func (r *repo) Create(ctx context.Context, chat *model.Chat) (int64, error) {
 			return 0, err
 		}
 	}
-
-	log.Printf("repository.Chat.Create ended. Created chat id: %d", chatID)
 
 	return chatID, nil
 }

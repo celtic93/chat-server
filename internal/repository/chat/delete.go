@@ -25,7 +25,7 @@ func (r *repo) Delete(ctx context.Context, id int64) error {
 		return err
 	}
 
-	log.Printf("repository.Chat.Delete started. Deleted chat id: %d", id)
+	log.Printf("repository.Chat.Delete ended. Deleted chat id: %d", id)
 
 	return nil
 }
